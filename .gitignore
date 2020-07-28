@@ -3,3 +3,13 @@
 ################################################################################
 
 /ProviderEdge_V3_Core.Common/bin/Debug/netcoreapp3.1
+/ProviderEdge_V3_Core.Common/obj
+/ProviderEdge_V3_Core.FileService/bin/Debug/netcoreapp3.1
+/ProviderEdge_V3_Core.FileService/obj
+/ProviderEdge_V3_Core.GblRepository/bin/Debug/netcoreapp3.1
+/ProviderEdge_V3_Core.GblRepository/obj
+/ProviderEdge_V3_Core.GblService/bin/Debug/netcoreapp3.1
+/ProviderEdge_V3_Core.GblService/obj
+/ProviderEdge_WebAPI_Core/bin/Debug/netcoreapp3.1
+/ProviderEdge_WebAPI_Core/obj
+/ProviderEdge_WebAPI_Core/.vs/ProviderEdge_WebAPI_Core/v16/Server/sqlite3

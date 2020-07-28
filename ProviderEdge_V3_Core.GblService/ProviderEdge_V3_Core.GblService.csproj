@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProviderEdge_V3_Core.Common\ProviderEdge_V3_Core.Common.csproj" />
+    <ProjectReference Include="..\ProviderEdge_V3_Core.FileService\ProviderEdge_V3_Core.FileService.csproj" />
+    <ProjectReference Include="..\ProviderEdge_V3_Core.GblRepository\ProviderEdge_V3_Core.GblRepository.csproj" />
+  </ItemGroup>
+
+</Project>
