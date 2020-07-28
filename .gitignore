@@ -1,0 +1,5 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/ProviderEdge_V3_Core.Common/bin/Debug/netcoreapp3.1
