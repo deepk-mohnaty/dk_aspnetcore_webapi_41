@@ -17,55 +17,76 @@ using ProviderEdge_WebAPI_Core.Middleware;
 using ProviderEdge_V3_Core.Common.CommonEntities;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using ProviderEdge_WebAPI_Core.HostedServices;
 
 namespace ProviderEdge_WebAPI_Core
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        //public Startup(IConfiguration configuration)
+        //{
+        //    Configuration = configuration;
+        //}
+
+        public Startup(IWebHostEnvironment env)
         {
-            Configuration = configuration;
+            // In ASP.NET Core 3.0 `env` will be an IWebHostEnvironment, not IHostingEnvironment.
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+            this.Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
+        //public ILifetimeScope AutofacContainer { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        //public void ConfigureServices(IServiceCollection services)
+        //{
+        //    services.AddControllers();
+        //    services.Configure<ApplicationSettings>(Configuration.GetSection("AppSettings"));
+        //    services.AddScoped<IGblSecurityRepository, GblSecurityRepository>();
+        //    services.AddScoped<ISecurityService, SecurityService>();
+        //    services.AddScoped<IHomeService, HomeService>();
+        //    //services.AddHostedService<>
+
+        //}
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.Configure<ApplicationSettings>(Configuration.GetSection("AppSettings"));
-            services.AddScoped<IGblSecurityRepository, GblSecurityRepository>();
-            services.AddScoped<ISecurityService, SecurityService>();
-            services.AddScoped<IHomeService, HomeService>();
+            services.AddHostedService<DkHostedServiceChat>();
+
+            //services.AddScoped<IGblSecurityRepository, GblSecurityRepository>();
+            //services.AddScoped<ISecurityService, SecurityService>();
+            //services.AddScoped<IHomeService, HomeService>();
             //services.AddHostedService<>
 
+            // Register dependencies, populate the services from
+            // the collection, and build the container. If you want
+            // to dispose of the container at the end of the app,  
+            // be sure to keep a reference to it as a property or field.
+            //var builder = new ContainerBuilder();
+
+
+            //return new AutofacServiceProvider(container);
+
+        }
+        
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            // Register your own things directly with Autofac, like:
+            //builder.RegisterModule(new MyApplicationModule());
+
+            builder.RegisterType<HomeService>().As<IHomeService>();
+            builder.RegisterType<GblSecurityRepository>().As<IGblSecurityRepository>();
+            builder.RegisterType<SecurityService>().As<ISecurityService>();
+            
         }
 
-        //public IServiceProvider ConfigureServices(IServiceCollection services)
-        //{
-        //    services.AddControllers();
-        //    services.Configure<ApplicationSettings>(Configuration.GetSection("AppSettings"));
-        //    //services.AddScoped<IGblSecurityRepository, GblSecurityRepository>();
-        //    //services.AddScoped<ISecurityService, SecurityService>();
-        //    //services.AddScoped<IHomeService, HomeService>();
-        //    //services.AddHostedService<>
-
-        //    // Register dependencies, populate the services from
-        //    // the collection, and build the container. If you want
-        //    // to dispose of the container at the end of the app,  
-        //    // be sure to keep a reference to it as a property or field.
-        //    var builder = new ContainerBuilder();
-
-        //    builder.RegisterType<HomeService>().As<IHomeService>();
-        //    builder.RegisterType<GblSecurityRepository>().As<IGblSecurityRepository>();
-        //    builder.RegisterType<SecurityService>().As<ISecurityService>();
-
-        //    builder.Populate(services);
-        //    var container = builder.Build();
-
-        //    return new AutofacServiceProvider(container);
-
-        //}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -78,6 +99,8 @@ namespace ProviderEdge_WebAPI_Core
             app.UseRouting();
 
             app.UseMiddleware<DkJWTMiddlware>();
+
+            //app.MapWhen(x=> x.)
 
             //app.UseAuthorization();
 
