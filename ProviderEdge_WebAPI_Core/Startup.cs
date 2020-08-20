@@ -18,6 +18,7 @@ using ProviderEdge_V3_Core.Common.CommonEntities;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ProviderEdge_WebAPI_Core.HostedServices;
+using ProviderEdge_WebAPI_Core.SocketMiddleware;
 
 namespace ProviderEdge_WebAPI_Core
 {
@@ -58,12 +59,14 @@ namespace ProviderEdge_WebAPI_Core
         {
             services.AddControllers();
             services.Configure<ApplicationSettings>(Configuration.GetSection("AppSettings"));
+            //services.AddSingleton<MessageQueueManager>();
+            services.AddWebSocketManager();
             services.AddHostedService<DkHostedServiceChat>();
 
-            //services.AddScoped<IGblSecurityRepository, GblSecurityRepository>();
-            //services.AddScoped<ISecurityService, SecurityService>();
-            //services.AddScoped<IHomeService, HomeService>();
-            //services.AddHostedService<>
+            services.AddScoped<IGblSecurityRepository, GblSecurityRepository>();
+            services.AddScoped<ISecurityService, SecurityService>();
+            services.AddScoped<IHomeService, HomeService>();
+            
 
             // Register dependencies, populate the services from
             // the collection, and build the container. If you want
@@ -76,21 +79,25 @@ namespace ProviderEdge_WebAPI_Core
 
         }
         
-        public void ConfigureContainer(ContainerBuilder builder)
-        {
-            // Register your own things directly with Autofac, like:
-            //builder.RegisterModule(new MyApplicationModule());
+        //public void ConfigureContainer(ContainerBuilder builder)
+        //{
+        //    // Register your own things directly with Autofac, like:
+        //    //builder.RegisterModule(new MyApplicationModule());
 
-            builder.RegisterType<HomeService>().As<IHomeService>();
-            builder.RegisterType<GblSecurityRepository>().As<IGblSecurityRepository>();
-            builder.RegisterType<SecurityService>().As<ISecurityService>();
+        //    builder.RegisterType<HomeService>().As<IHomeService>();
+        //    builder.RegisterType<GblSecurityRepository>().As<IGblSecurityRepository>();
+        //    builder.RegisterType<SecurityService>().As<ISecurityService>();
             
-        }
+        //}
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var objServiceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+            var objServiceProvider = objServiceScopeFactory.CreateScope().ServiceProvider;
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -103,6 +110,8 @@ namespace ProviderEdge_WebAPI_Core
             //app.MapWhen(x=> x.)
 
             //app.UseAuthorization();
+
+            app.MapWebSocketManager("/chat", objServiceProvider.GetService<WebSocketHandler>()); ;
 
             app.UseEndpoints(endpoints =>
             {

@@ -5,21 +5,26 @@ using System.Threading.Tasks;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
+using ProviderEdge_V3_Core.Common.CommonEntities;
 
 namespace ProviderEdge_WebAPI_Core.SocketMiddleware
 {
     public abstract class WebSocketHandler
     {
         protected ConnectionManager objWebSocketConnectionManager { get; set; }
+        protected MessageQueueManager objMQManager { get; set; }
+
+
         public WebSocketHandler(ConnectionManager objConnectionManager)
         {
             objWebSocketConnectionManager = objConnectionManager;
+            objMQManager = new MessageQueueManager();
         }
-        public virtual void OnConnected(WebSocket objWebSocket)
+        public virtual void OnConnected(WebSocket objWebSocket, string socketId)
         {
-            objWebSocketConnectionManager.AddSocket(objWebSocket);
+            objWebSocketConnectionManager.AddSocket(objWebSocket, socketId);
         }
-        public virtual async Task OnDisconnectedAsync(WebSocket objWebSocket)
+        public virtual async Task OnDisconnectedAsync(WebSocket objWebSocket, UserOnlineContext objUserOnlineContext)
         {
             await objWebSocketConnectionManager.RemoveSocket(objWebSocketConnectionManager.GetSocketId(objWebSocket));
         }
@@ -39,12 +44,17 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
 
         }
 
+        internal Task OnDisconnectedAsync(WebSocket socket)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task SendMessageAsync(string socketId, string message)
         {
             await SendMessageAsync(objWebSocketConnectionManager.GetSocketById(socketId), message);
         }
 
-        public async Task SendMEssageToAllSync(string message)
+        public async Task SendMessageToAllSync(string message)
         {
             foreach(var pair in objWebSocketConnectionManager.GetAll())
             {
@@ -55,7 +65,24 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
             }
         }
 
-        public abstract Task ReceiveAsync(WebSocket objWebSocket, WebSocketReceiveResult result, byte[] buffer);
+        public void GetMessageFromMQ()
+        {
+            if (objMQManager.IsItemPresent())
+            {
+                MessageQueueSocketModel objMQSocketModel;
+                objMQSocketModel = objMQManager.DequeueMessage();
+                if (objMQSocketModel != null)
+                {
+                  string userLoginId=  objMQSocketModel.objUserOnlineContext.UserLoginId;
+                  string message = objMQSocketModel.Message;
+
+                 
+                   
+                }
+            }
+        }
+
+        public abstract Task ReceiveAsync(WebSocket objWebSocket, WebSocketReceiveResult result, byte[] buffer, UserOnlineContext objUserOnlineContext);
 
     }
 }

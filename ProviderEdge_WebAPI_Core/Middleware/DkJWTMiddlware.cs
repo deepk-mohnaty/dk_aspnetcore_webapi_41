@@ -24,8 +24,6 @@ namespace ProviderEdge_WebAPI_Core.Middleware
             _next = next;
             _objAppsetings = objAppSettings.Value;
         }
-
-
         public async Task Invoke(HttpContext context, ISecurityService objSecurityService)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
@@ -34,10 +32,7 @@ namespace ProviderEdge_WebAPI_Core.Middleware
                 //attach user to context;
                 AttachUserToContext(context, objSecurityService, token);
             }
-
             await _next(context);
-
-
         }
 
         private void AttachUserToContext(HttpContext context, ISecurityService objSecurittyService, string SecurityToken)
@@ -62,18 +57,22 @@ namespace ProviderEdge_WebAPI_Core.Middleware
                 var jwtSecurityToken = (JwtSecurityToken)validatedToken;
                 var onlineid =jwtSecurityToken.Claims.First(x => x.Type == "id").Value;
 
-                //retrive session object and assign to the item
+                UserOnlineContext objUserOnlineContext = new UserOnlineContext()
+                {
+                    OnlineId=Convert.ToInt32(jwtSecurityToken.Claims.First(x => x.Type == "id").Value),
+                    UserLoginId =jwtSecurityToken.Claims.First(x => x.Type == "loginid").Value,
+                    RoleName = jwtSecurityToken.Claims.First(x => x.Type == "role").Value,
+                    UserName = jwtSecurityToken.Claims.First(x => x.Type == "username").Value,
+                };
 
-                //context.Items["ONLINEOBJ"] = objOnlineId;
+                //retrive session object and assign to the item
+                context.Items["ONLINEOBJ"] = objUserOnlineContext;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 string message = ex.Message;
             }
-
-
         }
-
 
     }
 }

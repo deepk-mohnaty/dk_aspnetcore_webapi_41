@@ -28,9 +28,9 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
             return _objSocketList.FirstOrDefault(p => p.Value == objWebSocket).Key;
         }
 
-        public void AddSocket(WebSocket objWebSocket)
+        public void AddSocket(WebSocket objWebSocket,string userIdAsSocketId)
         {
-            _objSocketList.TryAdd(GenerateSocketId(), objWebSocket);
+            _objSocketList.TryAdd(userIdAsSocketId, objWebSocket);
         }
 
         public async Task RemoveSocket(string socketId)
