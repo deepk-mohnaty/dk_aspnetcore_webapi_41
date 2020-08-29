@@ -59,57 +59,50 @@ namespace DK_Test
 
         public void GenerateInfiniteSequence(Int64 x, Int64 y)
         {
-            Console.WriteLine("Process started");
-
-            Int64 item;
-            string inputCode = "Y";
-            while (inputCode != exitChar)
+            try
             {
-                for (int lineCounter = 0; lineCounter < BatchLineCount; lineCounter++)
+                Console.WriteLine("Sequence will be generated for X: " + x.ToString() + ", Y: " + y.ToString());
+                
+                Int64 item;
+                string inputCode = "Y";
+                while (inputCode != exitChar)
                 {
-                    objStrbuilder.Clear();
-                    for (int charCounter = 0; charCounter < LineLength; charCounter++)
+                    for (int lineCounter = 0; lineCounter < BatchLineCount; lineCounter++)
                     {
-
-                        if (objQueue.TryDequeue(out item))
+                        objStrbuilder.Clear();
+                        for (int charCounter = 0; charCounter < LineLength; charCounter++)
                         {
-                            objQueue.Enqueue(x);
-                        }
-                        else
-                        {
-                            item = x;
-                        }
-                        objStrbuilder.Append(x.ToString() + ", ");
-                        //IsLineTerminate(ref charCounter, ref lineCounter);
 
-                        for (Int64 counter = 0; counter < item; counter++)
-                        {
-                            objQueue.Enqueue(y);
-                            objStrbuilder.Append(y.ToString() + ", ");
-                            //IsLineTerminate(ref charCounter, ref lineCounter);
-                        }
+                            if (objQueue.TryDequeue(out item))
+                            {
+                                objQueue.Enqueue(x);
+                            }
+                            else
+                            {
+                                item = x;
+                            }
+                            objStrbuilder.Append(x.ToString() + ", ");
 
-                        
+                            for (Int64 counter = 0; counter < item; counter++)
+                            {
+                                objQueue.Enqueue(y);
+                                objStrbuilder.Append(y.ToString() + ", ");
+                            }
+
+
+                        }
+                        Console.WriteLine(objStrbuilder.ToString());
                     }
-                    Console.WriteLine(objStrbuilder.ToString());
+
+                    Console.WriteLine("To continue (Press Y)/ To exit (Press N)");
+                    inputCode = Console.ReadLine().Trim().ToUpper();
                 }
-
-                Console.WriteLine("To continue (Press Y)/ To exit (Press N)");
-                inputCode = Console.ReadLine().Trim().ToUpper();
             }
-        }
-
-        private void IsLineTerminate(ref int charCounter, ref int lineCounter)
-        {
-            if (++charCounter == LineLength)
+            catch(Exception ex)
             {
-                Console.WriteLine(objStrbuilder.ToString());
-                charCounter = 0;
-                objStrbuilder.Clear();
-                lineCounter++;
+                Console.Write("Error: " + ex.Message);
             }
         }
-
 
     }
 }
