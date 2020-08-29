@@ -67,6 +67,28 @@ namespace ProviderEdge_V3_Core.GblRepository.Repository
                 MobileNo = "232323245",
                 RoleName = "User"
             });
+            _userList.Add(new UserModel
+            {
+                UserId = 4,
+                UserName = "Manoj Barik",
+                UserLoginId = "manoj",
+                UserPassword = "manoj@123",
+                RoleId = 1,
+                EmailId = "manoj@gmail.com",
+                MobileNo = "232323245",
+                RoleName = "User"
+            });
+            _userList.Add(new UserModel
+            {
+                UserId = 4,
+                UserName = "Sailesh Ambre",
+                UserLoginId = "sailesh",
+                UserPassword = "sailesh@123",
+                RoleId = 1,
+                EmailId = "sailesh@gmail.com",
+                MobileNo = "232323245",
+                RoleName = "User"
+            });
         }
 
         public async  Task<ModelResponse> UserAuthenticationAsync(string UserLoginId, string UserPassword)

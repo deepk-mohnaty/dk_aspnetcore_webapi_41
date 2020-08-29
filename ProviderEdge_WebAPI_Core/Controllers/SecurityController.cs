@@ -69,8 +69,7 @@ namespace ProviderEdge_WebAPI_Core.Controllers
                 }),
                 Expires = DateTime.UtcNow.AddDays(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                
-
+            
             };
 
            var newsecurityToken= objJwtSecurityTokenHandler.CreateToken(objTokenDescriptor);

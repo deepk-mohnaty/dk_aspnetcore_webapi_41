@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
@@ -19,7 +20,7 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
         {
             var socketId = objWebSocketConnectionManager.GetSocketId(objWebSocket);
             var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-
+            Debug.WriteLine(message);
             MessageQueueSocketModel objMQSocketModel = new MessageQueueSocketModel()
             {
                 SocketResult = result,
