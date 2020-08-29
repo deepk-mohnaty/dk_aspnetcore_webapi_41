@@ -51,12 +51,12 @@ namespace ProviderEdge_WebAPI_Core.HostedServices
             }
         }
 
-        private async Task ListenOnMQ()
+        private void ListenOnMQ()
         {
             int counter = 0;
             do
             {
-               await _objWebSocketHandler.GetMessageFromMQ();
+                _objWebSocketHandler.GetMessageFromMQ();
             }
             while (counter++ < 5);
         }

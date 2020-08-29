@@ -6,8 +6,6 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using ProviderEdge_V3_Core.Common.CommonEntities;
-using System.Diagnostics;
-using System.Text.Json;
 
 namespace ProviderEdge_WebAPI_Core.SocketMiddleware
 {
@@ -53,11 +51,7 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
 
         public async Task SendMessageAsync(string socketId, string message)
         {
-            WebSocket objSocket = objWebSocketConnectionManager.GetSocketById(socketId);
-            if (objSocket != null)
-            {
-                await SendMessageAsync(objSocket, message);
-            }
+            await SendMessageAsync(objWebSocketConnectionManager.GetSocketById(socketId), message);
         }
 
         public async Task SendMessageToAllSync(string message)
@@ -71,7 +65,7 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
             }
         }
 
-        public async Task GetMessageFromMQ()
+        public void GetMessageFromMQ()
         {
             if (objMQManager.IsItemPresent())
             {
@@ -81,21 +75,14 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
                 {
                   string userLoginId=  objMQSocketModel.objUserOnlineContext.UserLoginId;
                   string message = objMQSocketModel.Message;
-                  Debug.WriteLine("webSocketHandler Message Received. user: "+ userLoginId +", Message: "+ message);
-                  ChatMessage objChatMessage= JsonSerializer.Deserialize<ChatMessage>(message);
-                    await SendMessageAsync(objChatMessage.receiverid, objChatMessage.message);
+
+                 
+                   
                 }
             }
         }
 
         public abstract Task ReceiveAsync(WebSocket objWebSocket, WebSocketReceiveResult result, byte[] buffer, UserOnlineContext objUserOnlineContext);
 
-    }
-
-
-    public class ChatMessage
-    {
-        public string receiverid { get; set; }
-        public string message { get; set; }
     }
 }

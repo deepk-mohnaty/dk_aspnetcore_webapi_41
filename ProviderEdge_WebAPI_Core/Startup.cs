@@ -59,12 +59,6 @@ namespace ProviderEdge_WebAPI_Core
         {
             services.AddControllers();
             services.Configure<ApplicationSettings>(Configuration.GetSection("AppSettings"));
-
-            services.AddCors(c =>
-            {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            });
-
             //services.AddSingleton<MessageQueueManager>();
             services.AddWebSocketManager();
             services.AddHostedService<DkHostedServiceChat>();
@@ -111,23 +105,7 @@ namespace ProviderEdge_WebAPI_Core
 
             app.UseRouting();
 
-            app.Use(async (context, next) =>
-            {
-                string strUrl = context.Request.Path;
-                await next.Invoke();
-            });
-
-            app.UseCors(options => { options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); });
-
-            app.Use(async (context, next) =>
-            {
-                string strUrl = context.Request.Path;
-                await next.Invoke();
-            });
-
             app.UseMiddleware<DkJWTMiddlware>();
-
-            app.UseWebSockets();
 
             //app.MapWhen(x=> x.)
 

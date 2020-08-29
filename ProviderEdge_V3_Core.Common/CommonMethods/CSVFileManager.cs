@@ -6,7 +6,5 @@ namespace ProviderEdge_V3_Core.Common.CommonMethods
 {
    public class CSVFileManager
     {
-       
-
     }
 }
