@@ -30,7 +30,8 @@ namespace ProviderEdge_WebAPI_Core.Controllers
         [HttpGet("GetHomeData")]    
         public async Task<IActionResult> GetHomeData()
         {
-            ViewModelResponse objViewModelResponse = new ViewModelResponse();
+            ViewModelResponse objViewModelResponse = new ViewModelResponse(); 
+
             objViewModelResponse.ReturnObj = _objHomeService.GetHomeData();
             await Task.Delay(3000);
             objViewModelResponse.Status = "Y";
