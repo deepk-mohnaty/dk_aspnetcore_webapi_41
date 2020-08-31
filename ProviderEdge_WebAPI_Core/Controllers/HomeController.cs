@@ -15,11 +15,11 @@ namespace ProviderEdge_WebAPI_Core.Controllers
 {
     [Route("api/[controller]")]
     [DkAuthorize]
-    [ApiController]
+    [ApiController] 
     public class HomeController : ControllerBase
     {
         private IHomeService _objHomeService;
-        private readonly ApplicationSettings _objConfigSettings;
+        private readonly ApplicationSettings _objConfigSettings; 
         public HomeController(IHomeService objHomeService, IOptions<ApplicationSettings> objConfigSettings)
         {
             _objHomeService = objHomeService;
