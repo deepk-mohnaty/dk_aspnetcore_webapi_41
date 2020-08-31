@@ -4,6 +4,14 @@ using System.Text;
 
 namespace DK_Test
 {
+//Developed By: Deepak Mohanty
+//Date: 29-Aug-2020
+//Assignment problem statement
+// Write a generic and parameterised function that is able to generate the following(infinite) pattern
+//2,3,3,2,3,3,3,2,3,3,3,2,3,3,2,3,3,3,2,3,3,3,2,3,3,3,2,3,3,2,…..
+//    2	3	 3	 2	3	3	3	2
+//This is not a random pattern ..
+//Hint to understand how the pattern has ben created.If you count the number of 3s sandwitchd between 2s, you will notice that  it creates the same pattern
 
     public class Program
     {
