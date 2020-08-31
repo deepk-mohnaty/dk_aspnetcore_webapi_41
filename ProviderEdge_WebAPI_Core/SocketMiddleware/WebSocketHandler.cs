@@ -6,6 +6,8 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using ProviderEdge_V3_Core.Common.CommonEntities;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ProviderEdge_WebAPI_Core.SocketMiddleware
 {
@@ -33,13 +35,13 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
             if (objWebSocket.State != WebSocketState.Open)
                 return;
 
-             await objWebSocket.SendAsync(
-                   buffer: new ArraySegment<byte> (array: Encoding.ASCII.GetBytes(message),
-                                                   offset: 0,
-                                                   count: message.Length),
-                               messageType: WebSocketMessageType.Text,
-                               endOfMessage: true,
-                               cancellationToken : CancellationToken.None);
+            await objWebSocket.SendAsync(
+                  buffer: new ArraySegment<byte>(array: Encoding.ASCII.GetBytes(message),
+                                                  offset: 0,
+                                                  count: message.Length),
+                              messageType: WebSocketMessageType.Text,
+                              endOfMessage: true,
+                              cancellationToken: CancellationToken.None);
 
 
         }
@@ -51,21 +53,23 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
 
         public async Task SendMessageAsync(string socketId, string message)
         {
-            await SendMessageAsync(objWebSocketConnectionManager.GetSocketById(socketId), message);
+            WebSocket objWebSocket = objWebSocketConnectionManager.GetSocketById(socketId);
+            if(objWebSocket != null)
+                await SendMessageAsync(objWebSocketConnectionManager.GetSocketById(socketId), message);
         }
 
         public async Task SendMessageToAllSync(string message)
         {
-            foreach(var pair in objWebSocketConnectionManager.GetAll())
+            foreach (var pair in objWebSocketConnectionManager.GetAll())
             {
-               if(pair.Value.State == WebSocketState.Open)
+                if (pair.Value.State == WebSocketState.Open)
                 {
-                  await  SendMessageAsync(pair.Value, message);
+                    await SendMessageAsync(pair.Value, message);
                 }
             }
         }
 
-        public void GetMessageFromMQ()
+        public async Task GetMessageFromMQ()
         {
             if (objMQManager.IsItemPresent())
             {
@@ -73,11 +77,25 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
                 objMQSocketModel = objMQManager.DequeueMessage();
                 if (objMQSocketModel != null)
                 {
-                  string userLoginId=  objMQSocketModel.objUserOnlineContext.UserLoginId;
-                  string message = objMQSocketModel.Message;
+                    string userLoginId = objMQSocketModel.objUserOnlineContext.UserLoginId;
+                    string message = objMQSocketModel.Message;
 
-                 
-                   
+                    IncommingMessageModel objIncommingMessageModel = JsonSerializer.Deserialize<IncommingMessageModel>(message);
+
+                    OutgoingMessageModel objOutgoingMessageModel = new OutgoingMessageModel() { senderid = userLoginId, message = message };
+                    if (objIncommingMessageModel.receiverid =="ALL")
+                    {
+                       await SendMessageToAllSync(message);
+                    }
+                    else
+                    {
+                      string[] receiverIdArr= objIncommingMessageModel.receiverid.Split(",");
+                      foreach(var receiverId in receiverIdArr)
+                        {
+                            await SendMessageAsync(receiverId, message);
+                        }
+                    }
+
                 }
             }
         }

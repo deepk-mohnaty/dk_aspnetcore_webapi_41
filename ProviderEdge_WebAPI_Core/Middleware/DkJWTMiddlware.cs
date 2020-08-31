@@ -32,6 +32,14 @@ namespace ProviderEdge_WebAPI_Core.Middleware
                 //attach user to context;
                 AttachUserToContext(context, objSecurityService, token);
             }
+            else
+            {
+                if(context.WebSockets.IsWebSocketRequest &&  context.Request.QueryString.HasValue)
+                {
+                    token = context.Request.QueryString.ToString().Split("=").Last();
+                    AttachUserToContext(context, objSecurityService, token);
+                }
+            }
             await _next(context);
         }
 

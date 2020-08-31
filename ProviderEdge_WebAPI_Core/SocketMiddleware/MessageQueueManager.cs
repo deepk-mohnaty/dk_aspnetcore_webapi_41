@@ -57,6 +57,17 @@ namespace ProviderEdge_WebAPI_Core.SocketMiddleware
 
     }
 
+    public class IncommingMessageModel
+    {
+        public string receiverid { get; set; }
+        public string message { get; set; }
+    }
+
+    public class OutgoingMessageModel
+    {
+        public string senderid { get; set; }
+        public string message { get; set; }
+    }
     public enum MQOpType
     {
         OPEN,

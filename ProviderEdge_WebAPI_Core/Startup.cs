@@ -103,7 +103,11 @@ namespace ProviderEdge_WebAPI_Core
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
             app.UseRouting();
+
+            app.UseWebSockets();
 
             app.UseMiddleware<DkJWTMiddlware>();
 
