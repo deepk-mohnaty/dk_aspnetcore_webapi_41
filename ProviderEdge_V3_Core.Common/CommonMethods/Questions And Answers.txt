@@ -1,0 +1,79 @@
+1) Abstact Class vs Interface
+    1. A class can implement any number of interfaces but a subclass can at most use only one abstract class.
+    2.An abstract class can have non-abstract Methods(concrete methods) while in case of Interface all the methods has to be abstract.
+    3. An abstract class can declare or use any variables while an interface is not allowed to do so.
+    4.An abstract class can have constructor declaration while an interface can not do so.
+    5. An abstract Class is allowed to have all access modifiers for all of its member declaration while in interface we can not declare any access modifier(including public) as all the members of interface are implicitly public.
+
+2)Static class vs singleton
+    1.Singleton is a design pattern that makes sure that your application creates only one instance of the class anytime. It is highly efficient and very graceful. Singletons have a static property that you must access to get the object reference. So you are not instantiating an object such as in the manner we do for a normal class.
+       Class has to be sealed, constructor private,  a public static property geter will return static private object.
+    2.Static classes are basically used when you want to store a single instance, data which should be accessed globally throughout your application. The class will be initialized at any time but mostly it is initialized lazily. Lazy initialization means it is initialized at the last possible moment of time. There is a disadvantage of using static classes. You never can change how it behaves after the class is decorated with the static keyword.
+    3.Singleton Class instance can be passed as a parameter to another method whereas static class cannot
+    4.SingletonVsStaticClass.StaticSampleClass: static classes cannot implement interfaces no inheritance
+    5. Dependency injection not possible in static class. Incase of singleton it does not matter if object is singleton or transient because usage is same.
+   
+    1.Static classes cannot be instantiated.
+    2.All the members of a static class must be static; otherwise the compiler will give an error.
+    3.Indexers and destructors cannot be static
+    4.var cannot be used to define static members. You must specify a type of member explicitly after the static keyword.
+    5.Static classes are sealed class and therefore, cannot be inherited.
+    6.A static class cannot inherit from other classes.
+    7.Static class members can be accessed using ClassName.MemberName.
+    8.A static class remains in memory for the lifetime of the application domain in which your program resides.
+    9.The static constructor is called only once whenever the static method is used or creating an instance for the first time.
+
+3.var vs dynamic
+   1.var was introduced in C# 3.0, dynamic was introduced in C# 4.0
+   2.var is a statically typed variable. It results in a strongly typed variable, in other words the data type of these variables are inferred at compile time. This is done based on the type of value that these variables are initialized with.
+   3.dynamic are dynamically typed variables. This means, their type is inferred at run-time and not the compile time in contrast to var type.
+   4.var type of variables are required to be initialized at the time of declaration or else they encounter the compile time error: Implicitly-typed local variables must be initialized.
+   5.dynamic type variables need not be initialized when declared.
+   6.var does not allow the type of value assigned to be changed after it is assigned to. This means that if we assign an integer value to a var then we cannot assign a string value to it. 
+   7.dynamic allows the type of value to change after it is assigned to initially. 
+   8.Intellisense help is available for the var type of variable.Intellisense help is not available for dynamic type of variables
+   9.dynamic variables can be used to create properties and return values from a function.
+   10.var variables cannot be used for property or return values from a function. They can only be used as local variable in a function.
+
+4.boxing vs UnBoxing
+  1-Boxing is the process of converting a value type to the type object or to any interface type implemented by this value type
+  2-When the common language runtime (CLR) boxes a value type, it wraps the value inside a System.Object instance and stores it on the managed heap.
+  3.Unboxing extracts the value type from the object. Boxing is implicit; unboxing is explicit. 
+
+5.Dispose pattern
+ 
+class BaseClass : IDisposable
+{
+    // To detect redundant calls
+    private bool _disposed = false;
+
+    ~BaseClass() => Dispose(false);
+
+    // Public implementation of Dispose pattern callable by consumers.
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    // Protected implementation of Dispose pattern.
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        if (disposing)
+        {
+            // TODO: dispose managed state (managed objects).
+        }
+
+        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+        // TODO: set large fields to null.
+
+        _disposed = true;
+    }
+}
+
+6.

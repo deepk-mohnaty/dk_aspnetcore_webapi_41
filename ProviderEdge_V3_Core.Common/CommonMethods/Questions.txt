@@ -1,0 +1,63 @@
+1) Abstact Class vs Interface
+2) Factory pattrn vs Factory method vs Abstract factory
+3) Pub-Sub
+4) Producer Consumer
+5) SOLID principle
+6) Unit Testing
+7) Dispose pattern
+8) Memory management and Grabage collection
+9) boxing unboxing
+10) Static class vs singleton
+11) Synchronization principles
+12) Container class
+13) Polymorphism  abstract, virtual, new, override
+14) reflection
+16) Delegates
+17) var vs dynamic
+18)constants
+19)Async Await
+20)tasks
+
+1) MVC return types
+2) MVC lifecycle
+3) Rest vs soap
+4) Web socket and Signal R
+5) Web API lifecycle
+6) OWASP Security 
+7) Fileters
+8)JWT security
+9) Exception Handling
+10)Message Broker
+11)Microservice
+
+1)WCF Security
+2) ABCD of WCF
+3)Throttling
+
+1)Javascript questions
+2)Controller service factory 
+3)Interceptors
+4)Directives
+5)Routing
+6)$q, $watch, $digest, $apply
+7)Closures
+8)Observables
+9)Angular 6 Concepts
+
+1) Unit Testing NUnit
+
+1)Agile methodology
+
+1)CI/CD
+
+1)Normalization 1NF,2NF,3NF
+2)Indexing
+3)Pagination
+
+1)Azure
+2)AWS
+
+1)What steps are taken for high scalability
+2)What steps are taken for high security
+3)What steps are taken for high managability and maintainability
+
