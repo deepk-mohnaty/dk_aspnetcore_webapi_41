@@ -57,7 +57,17 @@ namespace DK_Test
 
     }
 
-    public class SequenceGeneration
+    public interface IDk1
+    {
+        int GetValue();
+    }
+
+    public interface IDk2
+    {
+        int GetValue();
+    }
+
+    public class SequenceGeneration:IDk1, IDk2
     {
         Queue<Int64> objQueue = new Queue<Int64>();
         StringBuilder objStrbuilder = new StringBuilder();
@@ -65,6 +75,11 @@ namespace DK_Test
         const int LineLength = 10;
         const int BatchLineCount = 5;
 
+        public int GetValue()
+        {
+            return 2;
+        }
+     
         public void GenerateInfiniteSequence(Int64 x, Int64 y)
         {
             try

@@ -76,4 +76,272 @@ class BaseClass : IDisposable
     }
 }
 
-6.
+6. Synchronization concepts
+
+     Locaking techniques
+       1- lock, Monitor.Enter(), Monitor.Exit() (20ns,exclusive)
+       2-Mutex(1000ns cross procss, exclusive)
+       3-Sepamphore(1000ns-Cross process)
+       4-SemaphoreSlim(200ns)  --sem.wait() and Sem.Release()
+       4-Reader WriterLock slim(40ns)
+
+     Signal techniques
+       1-Wait and Pulse
+       2-ManualResetEvent(Cross Process, 1000ns)- Allows a process to unblock indefinitely once ite recives a signal from others (till it reset)
+         ManualResetEventSlim()
+              A ManualResetEvent functions like an ordinary gate. Calling Set opens the gate, allowing any number of threads calling WaitOne to be let through. Calling Reset closes the gate. Threads that call WaitOne on a closed gate will block; when the gate is next opened, they will be released all at once. Apart from these differences, a ManualResetEvent functions like an AutoResetEvent.
+
+
+       3-AutoResetEvent :(Crossprocess, 1000ns)- Allows a thread to unblock once it receives a signal from others
+            only one waitone (blocked thres will be allowed to enter by one set().
+            if no thread is waiting then the set will wait for the next one	
+          class BasicWaitHandle
+{
+  static EventWaitHandle _waitHandle = new AutoResetEvent (false);
+ 
+  static void Main()
+  {
+    new Thread (Waiter).Start();
+    Thread.Sleep (1000);                  // Pause for a second...
+    _waitHandle.Set();                    // Wake up the Waiter.
+  }
+ 
+  static void Waiter()
+  {
+    Console.WriteLine ("Waiting...");
+    _waitHandle.WaitOne();                // Wait for notification
+    Console.WriteLine ("Notified");
+  }
+}
+
+    Produce And Consumer
+     using System;
+using System.Threading;
+using System.Collections.Generic;
+ 
+class ProducerConsumerQueue : IDisposable
+{
+  EventWaitHandle _wh = new AutoResetEvent (false);
+  Thread _worker;
+  readonly object _locker = new object();
+  Queue<string> _tasks = new Queue<string>();
+ 
+  public ProducerConsumerQueue()
+  {
+    _worker = new Thread (Work);
+    _worker.Start();
+  }
+ 
+  public void EnqueueTask (string task)
+  {
+    lock (_locker) _tasks.Enqueue (task);
+    _wh.Set();
+  }
+ 
+  public void Dispose()
+  {
+    EnqueueTask (null);     // Signal the consumer to exit.
+    _worker.Join();         // Wait for the consumer's thread to finish.
+    _wh.Close();            // Release any OS resources.
+  }
+ 
+  void Work()
+  {
+    while (true)
+    {
+      string task = null;
+      lock (_locker)
+        if (_tasks.Count > 0)
+        {
+          task = _tasks.Dequeue();
+          if (task == null) return;
+        }
+      if (task != null)
+      {
+        Console.WriteLine ("Performing task: " + task);
+        Thread.Sleep (1000);  // simulate work...
+      }
+      else
+        _wh.WaitOne();         // No more tasks - wait for a signal
+    }
+  }
+}
+                      
+   CountDown Event
+    CountdownEvent lets you wait on more than one thread. The class is new to Framework 4.0 and has an efficient fully managed implementation.
+
+    synchronizatin without locking
+       
+
+7. Difference between Thread Pool and TPL
+    If your application has lots of threads that spend most of their time blocked on a wait handle, you can reduce the resource burden by calling ThreadPool.RegisterWaitForSingleObject. 
+    This method accepts a delegate that is executed when a wait handle is signaled. While it’s waiting, it doesn’t tie up a thread:
+  
+
+8.SOLID Principle
+   S-Single Responsibility: a classs should have only one reason to change
+   O-Open and close: you should be able to extend the class without modifying it
+   L-Liskovs Substitution Principle: derived classes must be substitutable for their base classes
+   I-Interface Seggregation: Make fine grained interfaces that are client specific
+   D-Dependency Injection: Depend on the abstractio not one the concrete implementation
+
+9.ACID property
+   A- Atomic
+   C- Consistency
+   I- Isolation
+   D- Durability
+
+10- type of isolations
+     Read Uncommitted
+     Read Commmited
+     
+
+11-Normalization
+    1-NF: Removes duplicated attributes, Attribute data should be atomic, and attribute should be same kind.
+    2-NF: Should be in 1NF and each non-key is fully dependent on the primary key.
+    3-NF: Should be in 2NF and all the non-key attributes which are not dependent on the primary key should be removed. 
+        All the attributes which are dependent on the other non-key attributes should also be removed. Normalization is done in OLTP.
+
+12-Indexes
+    Clustered Index
+    Unclustered Index
+
+13- Pagination
+
+14-Primary key, Foreign Key, 
+
+15-Type of joins 
+
+16-Procedure vs UDF
+
+17-Type oof views
+
+18-Type of temporary tables
+
+19-
+
+13-Tasks and Async/Await
+
+
+14-Polymorphism Abstract, virual, override, new
+
+15-Delegates
+
+
+16-MVC life clycle
+ Step 1 - Fill route
+ 
+MVC requests are mapped to route tables which in turn specify which controller and action to be invoked.
+ So if the request is the first request the first thing is to fill the rout table with routes collection. This filling of the route table happens the global.asax file.
+Step 2 - Fetch route
+ 
+Depending on the URL sent “UrlRoutingModule” searches the route table to create “RouteData” object which has the details of which controller and action to invoke.
+Step 3 - Request context created
+ 
+The “RouteData” object is used to create the “RequestContext” object.
+
+Step 4 - Controller instance created 
+ 
+This request object is sent to “MvcHandler” instance to create the controller class instance. Once the controller class object is created it calls the “Execute” method of the controller class.
+
+Creating a Response object
+ 
+This phase has two steps executing the action and finally sending the response as a result to the view.
+  
+First Request--> Check if First Request --> 
+   (Yes)--> Create Route Table-->
+  --> UrlRoutingModule searches the correct route in the table and create routedata
+  -->Using Routedata object request context is created
+  --> Then It is passed to MVC handler whcih instantiates controller object and correct action method is executed
+  --Then response is generated based on the result type  ViewResult, JsonResult, FIleResult etc
+
+
+
+
+
+17-WebAPi life cycle
+
+18-Filetes
+   Action Filters: Action filters are used to implement logic that gets executed before and after a controller action executes. We will look at Action Filters in detail in this chapter.
+   Authorization Filters:Authorization filters are used to implement authentication and authorization for controller actions.
+   Result Filters:Result filters contain logic that is executed before and after a view result is executed. For example, you might want to modify a view result right before the view is rendered to the browser.
+   Exception Filters: Exception filters are the last type of filter to run. You can use an exception filter to handle errors raised by either your controller actions or controller action results.
+       You can also use exception filters to log
+ 
+
+   ASP.NET MVC provides the following action filters,
+    Output Chache:This action filter caches the output of a controller action for a specified amount of time.
+    Handle Error: This action filter handles errors raised when a controller action executes.
+    Authorize: This action filter enables you to restrict access to a particular user or role
+
+
+19- Routing:
+    Routing is a mechanism to process the incoming URL that is more descriptive and gives the desired response. In this case, URL is not mapped to specific files or folder as was the case of earlier days web sites.
+ 
+There are two types of routing (after the introduction of ASP.NET MVC 5).
+Convention-based routing - to define this type of routing, we call MapRoute method and set its unique name, URL pattern and specify some default values.
+ 
+Attribute-based routing - to define this type of routing, we specify the Route attribute in the action method of the controller.
+Routing is the URL pattern that is mapped together to a handler,routing is responsible for incoming browser request for particular MVC controller. In other ways let us say routing help you to define a URL structure and map the URL with controller. There are three segments for routing that are important,
+ControllerName
+ActionMethodName
+Parammeter
+
+19-Exception Handling
+
+20-Rerlection
+
+21-MVC redirection
+
+
+22-MVC return types
+ https://www.c-sharpcorner.com/UploadFile/puranindia/ASP-NET-MVC-Interview-Questions/
+   ViewResult (View):This return type is used to return a webpage from an action method.
+   PartialviewResult (Partialview): This return type is used to send a part of a view that will be rendered in another view.
+   RedirectResult (Redirect):This return type is used to redirect to any other controller and action method depending on the URL.
+   RedirectToRouteResult (RedirectToAction, RedirectToRoute): This return type is used when we want to redirect to any other action method.
+   ContentResult (Content): This return type is used to return HTTP content type like text/plain as the result of the action.
+   jsonResult (json)
+   javascriptResult (javascript)
+   FileResult (File)
+   EmptyResult
+23-REST vs SOAP
+    SOAP provides the following advantages when compared to REST:
+   1-Language, platform, and transport independent (REST requires use of HTTP)
+   2-Works well in distributed enterprise environments (REST assumes direct point-to-point communication)
+   3-Standardized
+   4-Provides significant pre-build extensibility in the form of the WS* standards
+   5-Built-in error handling
+   6-Automation when used with certain language products
+   REST is easier to use for the most part and is more flexible. It has the following
+   1- No expensive tools require to interact with the web service
+   2- Smaller learning curve
+   3- Efficient (SOAP uses XML for all messages, REST can use smaller message formats)
+   4- Fast (no extensive processing required)
+   5- Closer to other web technologies in design philosophy
+
+
+24-WCF concepts
+   ABCD
+25-Throttling
+
+   WCF throttling provides some properties that you can use to limit how many instances or sessions are created at the application level. Performance of the WCF service can be improved by creating proper instance.
+   The throttling of services is another key element for WCF performance tuning. WCF throttling provides the prosperities maxConcurrentCalls, maxConcurrentInstances, and maxConcurrentSessions, that can help us to limit the number of instances or sessions are created at the application level.
+  maxConcurrentCalls:This specifies the maximum number of messages processed across the service host. The default value for this property is 16 (WCF 4.0 is improved to default is 16 * Processor Count).
+  maxConcurrentInstances: This specifies the maximum number of instances of a context object that executes at one time with the service. The default is Int32.MaxValue.
+  maxConcurrentSessions: This specifies the maximum number of sessions at one time within the service host object. The default value is 10 (WCF 4.0 increases that to 100 * Processor Count).
+
+16-End Points
+
+17-Security
+
+Conccurrency
+   Single:  single request will be processed by a single thread on a server at any point of time. The client proxy sends the request to the server, it process the request and takes another request.
+   Multiple: Multiple requests will be processed by multiple threads on the server at any point of time. The client proxy sends multiple requests to the server. Requests are processed by the server 
+              by spawning multiple threads on the server object.
+   Reentrant: The reentrant concurrency mode is nearly like the single concurrency mode. It is a single-threaded service instance that receives requests from the client proxy and it unlocks the thread 
+              only after the reentrant service object calls the other service or can also call a WCF client through call back.
+
+
+
+
